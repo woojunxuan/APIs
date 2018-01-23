@@ -21,11 +21,11 @@
       }
       .ui.segment {
         height: 450px;
-        width: 400px;
+        width: 380px;
         position: absolute;
         top: 40%;
         left: 50%;
-        margin:-200px 0 0 -250px;
+        margin:-190px 0 0 -250px;
       }
       input {
         height: 45px;
@@ -50,8 +50,8 @@
             <!-- 用户名 -->
             <validate :state="formstate" v-model="formstate" @submit.prevent="onSubmit" :class="fieldClassName(formstate.name)">
             <div class="fields">
-              <div class="wide field"></div>
-              <div class="fourteen wide field">
+              <div class="two wide field"></div>
+              <div class="twelve wide field">
                 <div class="ui left icon input" >
                   <input type="text" placeholder="用户名" name="username" class="form-control" required v-model.lazy="model.global_username">
                   <i class="user icon"></i>
@@ -62,24 +62,24 @@
                 </field-messages>
               </div>
               </div>
-              <div class="wide field"></div>
+              <div class="two wide field"></div>
 
             </validate>
             <!-- 密码 -->
             <div class="fields">
-              <div class="wide field"></div>
-              <div class="fourteen  wide field">
+              <div class="two wide field"></div>
+              <div class="twelve wide field">
                 <div class="ui left icon input">
                   <input type="password" placeholder="密码" v-model="model.global_password">
                   <i class="lock icon"></i>
                 </div>
               </div>
-              <div class="wide field"></div>
+              <div class="two wide field"></div>
             </div>
             <!-- 手机/固话/SIP分机选择 -->
             <div class="inline fields">
-              <div class="wide field"></div>
-              <div class="fourteen  wide field">
+              <div class="two wide field"></div>
+              <div class="twelve wide field">
                 <div class="field">
                   <div class="ui radio checkbox">
                       <input type="radio" id="mobile" name="frequency-login" checked="checked"  v-on:click="toggleLoginType(0)" >
@@ -94,11 +94,11 @@
                   </div>
                 </div>
               </div>
-              <div class="wide field"></div>
+              <div class="two wide field"></div>
             </div>
             <div class="fields">
-              <div class="wide field"></div>
-              <div class="fourteen  wide field">
+              <div class="two wide field"></div>
+              <div class="twelve wide field">
                 <div class="ui left icon input">
                     <template v-if="model.global_signIn_type === 0">
                       <input type="text" placeholder="请输入手机/固话号码" v-model="model.global_signIn_type_value">
@@ -110,24 +110,24 @@
                     </template>
                 </div>
               </div>
-                <div class="wide field"></div>
+                <div class="two wide field"></div>
               </div>
           <!-- 记住我选项与找回密码栏 -->
           <div class="fields">
-            <div class="wide field"></div>
-            <div class="five wide field">
+            <div class="two wide field"></div>
+            <div class="four wide field">
               <div class="ui checkbox">
                 <input type="checkbox" id="remember-me">
                 <label for="remember-me" style="color: grey;">记住我</label>
               </div>
             </div>
             <div class="four wide field"></div>
-            <div class="six wide field"><a href="#" style="font-size: 13px;">登录遇到问题?</a></div>
+            <div class="five wide field"><a href="#" style="font-size: 13px;">登录遇到问题?</a></div>
           </div>
           <div class="fields">
-            <div class="wide field"></div>
+            <div class="two wide field"></div>
             <button class="fluid ui large blue circular button" id="login-button" type="submit" v-on:click="login()">登录</button>
-            <div class="wide field"></div>
+            <div class="two wide field"></div>
           </div>
         </div>
       </vue-form>
@@ -165,7 +165,8 @@
            }
          },
           onSubmit: function() {
-             console.log(this.formstate.$valid);
+            console.log('--------------');
+            console.log(this.formstate.$valid);
           },
           toggleLoginType: function (t) {
             if (t == 0) {
