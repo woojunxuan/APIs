@@ -3,10 +3,11 @@
 
 <head>
     <meta charset="utf-8">
-    <script type="text/javascript" src="{% static 'js/reqwest.js' %}"></script>
+    <!-- <script type="text/javascript" src="{% static 'js/reqwest.js' %}"></script> -->
     <link rel="stylesheet" href="{% static 'css/semantic.css' %}">
     <!-- <link rel="Shortcut Icon" href="static/images/favicon.png" type="image/x-icon"> -->
     <script type="text/javascript" src="{% static 'js/vue.js' %}"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script type="text/javascript" src="{% static 'js/vue-form.min.js' %}"></script>
     <title>CrmAPI系统</title>
 </head>
@@ -51,7 +52,8 @@
         </div>
         <div class="ui divider"></div>
         <vue-form :state="formstate" @submit.prevent="onSubmit">
-            <div class="ui samll form">
+            <div class="ui samll form" method="post">
+                {% csrf_token %}
                 <!-- 用户名 -->
                 <validate auto-label class="form-group required-field" :class="fieldClassName(formstate.username)">
                     <div class="fields">
@@ -146,11 +148,11 @@
                 </div>
                 <div class="fields">
                     <div class="two wide field"></div>
-                    <button class="fluid ui large blue circular button" id="login-button" type="submit" v-on:click="login()">登录</button>
-                    <div class="two wide field"></div>
+                    <button class="fluid ui large blue circular button" type="submit">登录</button>
                 </div>
             </div>
         </vue-form>
+         <pre>{{ formstate }}</pre>
     </div>
     <script>
     var options = {
@@ -192,8 +194,21 @@
                 }
             },
             onSubmit: function() {
-                console.log('--------------');
-                console.log(this.formstate.$valid);
+                if(this.formstate.$invalid) {
+                    return;
+                }
+                axios.post('/crm/sign_in/', {
+                    username: vm.model.username,
+                    password: vm.model.password,
+                    sign_in_type: vm.model.sign_in_type,
+                    number: vm.model.number
+                })
+                .then(function (response) {
+                    console.log(response);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
             },
             toggleLoginType: function(t) {
                 if (t == 0) {
@@ -203,15 +218,6 @@
                 }
                 return this.model.sign_in_type;
             },
-            // login_or_registration: function () {
-            //   this.isLogin = ! this.isLogin;
-            //   this.login_n = 0;
-            //   this.register_n = 0;
-            // },
-            login: function() {
-                // console.log(this.username)
-            },
-            get_active_code: function() {}
         }
     });
     </script>

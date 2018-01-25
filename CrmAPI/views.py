@@ -1,18 +1,21 @@
 from django.shortcuts import render
-# from forms import SignInForm
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 def index(request):
     return render(request, 'index.html')
 
-
-def login(request):
+@csrf_exempt
+def sign_in(request):
     # context = {}
-    # if request.method == 'GET':
-    #     form = SignInForm
-    # if request.method == 'POST':
-    #     form = SignInForm(request.POST)
-    # context['form'] = form
+    # context.update(csrf(request))
+    if request.method == 'GET':
+        pass
+    elif request.method == 'POST':
+        print(request)
+        recv_json_data = json.loads(request.body)
+        print(recv_json_data)
     return render(request, 'sign_in.html')
 
-def register(request):
+def sign_up(request):
     return render(request, 'sign_up.html')
