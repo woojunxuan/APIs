@@ -1,169 +1,232 @@
-<!DOCTYPE html>
-{% load staticfiles %}
+<!DOCTYPE html> {% load staticfiles %}
 <html>
-  <head>
-    <meta charset="utf-8">
-    <script type="text/javascript" src="{% static 'js/reqwest.js' %}"></script>
-    <link rel="stylesheet" href="{% static 'css/semantic.css' %}">
-    <!-- <link rel="Shortcut Icon" href="static/images/favicon.png" type="image/x-icon"> -->
-    <script type="text/javascript" src="{% static 'js/vue.js' %}"></script>
-    <title>CrmAPI系统</title>
-  </head>
-  <body>
-    <style media="screen">
-      * {
-        margin: 0;
-        padding: 0;
-      }
-      body {
-        background-color: #f1f1f1;
-      }
-      .ui.segment {
-        height: 500px;
-        width: 380px;
-        position: absolute;
-        top: 40%;
-        left: 50%;
-        /* background: url("{% static 'images/bobo-logo.jpg' %}"); */
-        /* background-repeat:no-repeat; */
-        margin:-190px 0 0 -250px;
-      }
-      input {
-        height: 40px;
-      }
-      #register-button {
-        margin-top: 24px;
-      }
-    </style>
-    <div id="app"  class="ui segment">
-      <div class="ui header" style="margin-top: 25px;">
-        <img class="ui tiny circular image" style="width: 50px; height: 50px;margin-left:30px;" src="{% static 'images/logo.png' %}" alt="">
-        <!-- 默认为登陆界面 -->
-        <div class="ui large buttons" style="margin-left:5%;">
-          <a href="{% url 'sign_in' %}" class="ui button">登录</a>
-          <div class="or"></div>
-          <a href="{% url 'sign_up' %}" class="ui green button" >注册</a>
-        </div>
+
+<head>
+  <meta charset="utf-8">
+  <script type="text/javascript" src="{% static 'js/reqwest.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'css/semantic.css' %}">
+  <!-- <link rel="Shortcut Icon" href="static/images/favicon.png" type="image/x-icon"> -->
+  <script type="text/javascript" src="{% static 'js/vue.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/vue-form.min.js' %}"></script>
+  <title>CrmAPI系统</title>
+</head>
+
+<body>
+  <style media="screen">
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #f1f1f1;
+    }
+
+    .ui.segment {
+      height: 500px;
+      width: 380px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      /* background: url("{% static 'images/bobo-logo.jpg' %}"); */
+      /* background-repeat:no-repeat; */
+      margin: -250px 0 0 -190px;
+    }
+
+    input {
+      height: 45px;
+    }
+
+    #register-button {
+      margin-top: 24px;
+    }
+  </style>
+  <div id="app" class="ui segment">
+    <div class="ui header" style="margin-top: 25px;">
+      <img class="ui tiny circular image" style="width: 50px; height: 50px;margin-left:30px;" src="{% static 'images/logo.png' %}" alt="">
+      <!-- 默认为登陆界面 -->
+      <div class="ui large buttons" style="margin-left:5%;">
+        <a href="{% url 'sign_in' %}" class="ui button">登录</a>
+        <div class="or"></div>
+        <a href="{% url 'sign_up' %}" class="ui green button">注册</a>
       </div>
-      <div class="ui divider"></div>
+    </div>
+    <div class="ui divider"></div>
+    <vue-form :state="formstate" @submit.prevent="onSubmit">
       <div class="ui samll form">
         <!-- 用户名 -->
-        <div class="fields">
-          <div class="two wide field"></div>
-          <div class="twelve wide field">
-            <div class="ui left icon input" >
-              <input type="text" placeholder="用户名" name="username" v-model="global_username">
-              <i class="user icon"></i>
+        <validate auto-label class="form-group required-field" :class="fieldClassName(formstate.username)">
+          <div class="fields">
+            <div class="two wide field"></div>
+            <div class="twelve wide field">
+              <div class="ui left icon input">
+                <input type="text" username-validator placeholder="用户名" name="username" class="form-control" required v-model.lazy="model.username">
+                <i class="user icon"></i>
+              </div>
+              <field-messages auto-label name="username" show="$touched || $submitted" class="form-control-feedback">
+                <!-- <div>Success!</div> -->
+                <div slot="required" style="color:red;">*用户名为必填项</div>
+                <div slot="username-validator" style="color:red;">用户名由6-20位(数字,字母,下划线)构成</div>
+              </field-messages>
             </div>
           </div>
-          <div class="two wide field"></div>
-        </div>
+        </validate>
         <!-- 密码 -->
-        <div class="fields">
-          <div class="two wide field"></div>
-          <div class="twelve wide field">
-            <div class="ui left icon input">
-              <input type="password" placeholder="密码" v-model="global_password_1">
-              <i class="lock icon"></i>
+        <validate auto-label class="form-group required-field" :class="fieldClassName(formstate.password)">
+          <div class="fields">
+            <div class="two wide field"></div>
+            <div class="twelve wide field">
+              <div class="ui left icon input">
+                <input type="password" password-validator placeholder="密码" name="password" class="form-control" required v-model.lazy="model.password">
+                <i class="lock icon"></i>
+              </div>
+              <field-messages auto-label name="password" show="$touched || $submitted" class="form-control-feedback">
+                <div slot="required" style="color:red;">*密码为必填项</div>
+                <div slot="password-validator" style="color:red;">密码名由6-20位(数字,字母)构成</div>
+              </field-messages>
             </div>
           </div>
-          <div class="two wide field"></div>
-        </div>
+        </validate>
         <!-- 确认密码 -->
-        <div class="fields">
-          <div class="two wide field"></div>
-          <div class="twelve wide field">
-            <div class="ui left icon input">
-              <input type="password" placeholder="确认密码" v-model="global_password_2">
-              <i class="lock icon"></i>
+        <validate auto-label class="form-group required-field" :class="fieldClassName(formstate.confirmPassword)">
+          <div class="fields">
+            <div class="two wide field"></div>
+            <div class="twelve wide field">
+              <div class="ui left icon input">
+                <input type="password" placeholder="确认密码" :matches="model.password" name="confirmPassword" class="form-control" required v-model.lazy="model.confirmPassword">
+                <i class="lock icon"></i>
+              </div>
+              <field-messages auto-label name="confirmPassword" show="$touched || $submitted" class="form-control-feedback">
+                <div slot="required" style="color:red;">*确认密码为必填项</div>
+                <div slot="matches" style="color:red;">两个密码不匹配</div>
+              </field-messages>
             </div>
           </div>
-          <div class="two wide field"></div>
-        </div>
+        </validate>
         <!-- 手机/固话/SIP分机选择 -->
         <div class="inline fields">
           <div class="two wide field"></div>
           <div class="twelve wide field">
             <div class="field">
               <div class="ui radio checkbox">
-                  <input type="radio" id="mobile" name="frequency-login" checked="checked"  v-on:click="toggleLoginType(0)" >
-                  <label for="mobile"><i class="mobile icon"></i>手机/固话</label>
+                <input type="radio" id="mobile" name="frequency-login" checked="checked" v-on:click="toggleLoginType(0)">
+                <label for="mobile"><i class="mobile icon"></i>手机/固话</label>
               </div>
             </div>
             <div class="field">
               <div class="ui radio checkbox">
-                  <input type="radio" id="sip" name="frequency-login"  v-on:click="toggleLoginType(1)">
-                  <label for="sip"><i class="text telephone icon"></i>SIP分机</label>
+                <input type="radio" id="sip" name="frequency-login" v-on:click="toggleLoginType(1)">
+                <label for="sip"><i class="text telephone icon"></i>SIP分机</label>
               </div>
             </div>
           </div>
-          <div class="two wide field"></div>
         </div>
-        <div class="fields">
-          <div class="two wide field"></div>
-          <div class="twelve wide field">
-            <div class="ui left icon input">
-                <template v-if="global_signIn_type === 0">
-                  <input type="text" placeholder="请输入手机/固话号码" v-model="global_signIn_type_value">
-                  <i class="mobile icon"></i>
-                </template>
-                <template v-else-if="global_signIn_type === 1">
-                  <input type="text" placeholder="请输入SIP号码" v-model="global_signIn_type_value">
-                  <i class="text telephone phone icon"></i>
-                </template>
-            </div>
-          </div>
-            <div class="two wide field"></div>
-          </div>
-          <!-- 验证码 -->
+
+        <validate auto-label class="form-group required-field" :class="fieldClassName(formstate.sign_up_type)">
           <div class="fields">
             <div class="two wide field"></div>
-            <div class="twelve  wide field">
+            <div class="twelve wide field">
               <div class="ui left icon input">
-                <input type="text" placeholder="验证码" v-bind:value="global_active_code" v-model="global_active_code">
-                <i class="check square icon"></i>
-                <button class="ui button" v-on:click="get_active_code()">获取验证码</button>
+                <template v-if="model.sign_up_type === 0">
+                                    <input type="text" name="mobile" placeholder="请输入手机/固话号码" required pattern="^\d{11,16}$" class="form-control" v-model.lazy="model.number">
+                                    <i class="mobile icon"></i>
+                                </template>
+                <template v-else-if="model.sign_up_type === 1">
+                                    <input type="text" name="mobile" placeholder="请输入SIP号码" required pattern="^\d{4,10}$" class="form-control" v-model.lazy="model.number">
+                                    <i class="text telephone phone icon"></i>
+                                </template>
               </div>
+              <field-messages name="mobile" show="$touched || $submitted" class="form-control-feedback">
+                <template v-if="model.sign_up_type === 0">
+                                    <div slot="required" style="color:red;">*手机号码为必填项</div>
+                                    <div slot="pattern" style="color:red;">无效的手机号码</div>
+                                </template>
+                <template v-else-if="model.sign_up_type === 1">
+                                    <div slot="required" style="color:red;">*SIP号码为必填项</div>
+                                    <div slot="pattern" style="color:red;">无效的SIP号码</div>
+                                </template>
+              </field-messages>
             </div>
-            <div class="two wide field"></div>
           </div>
-
+        </validate>
         <div class="fields">
           <div class="two wide field"></div>
           <button class="fluid ui large green circular button" id="login-button" type="submit" v-on:click="login()">注册</button>
           <div class="two wide field"></div>
         </div>
-
       </div>
-    </div>
-    <script>
-      var vm = new Vue({
-        el: "#app",
-        data:{
-          global_username: '',
-          global_password: '',
-          global_signIn_type: 0,
-          global_signIn_type_value: '',
+    </vue-form>
+  </div>
+  <script>
+    var options = {
+      inputClasses: {
+        valid: 'form-control-success',
+        invalid: 'form-control-danger'
+      },
+      validators: {
+        matches: function(value, attrValue) {
+          if (!attrValue) {
+            return true;
+          }
+          return value === attrValue;
         },
-        methods:{
-          toggleLoginType: function (t) {
-            if (t == 0) {
-              vm.global_signIn_type = 0;
-            } else if (t == 1) {
-              vm.global_signIn_type = 1;
-            }
-            return this.global_signIn_type;
-          },
-          // login_or_registration: function () {
-          //   this.isLogin = ! this.isLogin;
-          //   this.login_n = 0;
-          //   this.register_n = 0;
-          // },
-		  login:function(){},
-		  get_active_code:function(){}
+        'username-validator': function(value) {
+          return /^[a-zA-Z0-9_]{6,20}$/.test(value);
+        },
+        'password-validator': function(value) {
+          return /^[a-zA-Z0-9]{6,20}$/.test(value);
+        },
+      }
+    }
+    var vm = new Vue({
+      el: "#app",
+      mixins: [new VueForm(options)],
+      data: {
+        formstate: {},
+        model: {
+          username: '',
+          password: '',
+          confirmPassword: '',
+          sign_up_type: 0,
+          number: '',
         }
-      });
+      },
+      methods: {
+        fieldClassName: function(field) {
+          if (!field) {
+            return '';
+          }
+          if ((field.$touched || field.$submitted) && field.$valid) {
+            return 'has-success';
+          }
+          if ((field.$touched || field.$submitted) && field.$invalid) {
+            return 'has-danger';
+          }
+        },
+        onSubmit: function() {
+          console.log('--------------');
+          console.log(this.formstate.$valid);
+        },
+        toggleLoginType: function(t) {
+          if (t == 0) {
+            vm.model.sign_up_type = 0;
+          } else if (t == 1) {
+            vm.model.sign_up_type = 1;
+          }
+          return this.model.sign_up_type;
+        },
+        // login_or_registration: function () {
+        //   this.isLogin = ! this.isLogin;
+        //   this.login_n = 0;
+        //   this.register_n = 0;
+        // },
+        login: function() {
+          // console.log(this.username)
+        },
+        get_active_code: function() {}
+      }
+    });
+  </script>
+</body>
 
-    </script>
-  </body>
 </html>
