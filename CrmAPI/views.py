@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.http import HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 import json
 
@@ -10,12 +11,12 @@ def sign_in(request):
     # context = {}
     # context.update(csrf(request))
     if request.method == 'GET':
-        pass
+        return render(request, 'sign_in.html')
     elif request.method == 'POST':
-        print(request)
         recv_json_data = json.loads(request.body)
         print(recv_json_data)
-    return render(request, 'sign_in.html')
+        return HttpResponseRedirect('/crm/index/')
+
 
 def sign_up(request):
     return render(request, 'sign_up.html')
